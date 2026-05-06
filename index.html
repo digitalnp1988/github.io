@@ -4,94 +4,34 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Digital Nepal</title>
+<title>Digital NP Store</title>
 
 <style>
-body {margin:0;font-family:Arial;background:#f6f6f6;}
-
-/* HEADER */
-header {background:#111;color:#fff;padding:15px;display:flex;justify-content:space-between;align-items:center;}
-.logo {font-size:20px;font-weight:bold;}
-nav a {color:#fff;margin:0 10px;text-decoration:none;}
-
-/* HERO */
-.hero {
-background:url('https://via.placeholder.com/1200x400') center/cover;
-color:#fff;text-align:center;padding:80px 20px;
+body {
+  font-family: Arial;
+  margin: 0;
+  background: #f5f5f5;
 }
-.hero h1 {font-size:40px;margin:0;}
 
-/* SEARCH */
-.search-box {text-align:center;padding:20px;}
-.search-box input {width:60%;padding:10px;font-size:16px;}
-
-/* PRODUCTS */
-.products {
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:20px;
-padding:20px;
+h1 {
+  text-align: center;
+  background: #111;
+  color: white;
+  padding: 15px;
 }
+
+#products {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
 .card {
-background:#fff;
-border-radius:10px;
-padding:10px;
-transition:0.3s;
-box-shadow:0 0 10px rgba(0,0,0,0.1);
-}
-.card:hover {transform:scale(1.03);}
-.card img {width:100%;height:200px;object-fit:cover;}
-.price {color:#e60023;font-weight:bold;}
-
-/* BUTTON */
-button {
-background:#ff6600;
-color:#fff;
-border:none;
-padding:10px;
-width:100%;
-cursor:pointer;
-border-radius:5px;
-}
-
-/* CART */
-.cart-btn {
-position:fixed;
-right:10px;
-top:10px;
-background:#000;
-color:#fff;
-padding:10px;
-border-radius:5px;
-cursor:pointer;
-}
-.cart-page {
-position:fixed;
-right:0;
-top:0;
-width:350px;
-height:100%;
-background:#fff;
-padding:20px;
-display:none;
-overflow:auto;
-box-shadow:-3px 0 10px rgba(0,0,0,0.3);
-}
-
-/* FORM */
-input,textarea {
-width:100%;
-padding:8px;
-margin:5px 0;
-}
-
-/* FOOTER */
-footer {
-background:#111;
-color:#fff;
-text-align:center;
-padding:20px;
-margin-top:20px;
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 </style>
 
@@ -99,114 +39,13 @@ margin-top:20px;
 
 <body>
 
-<header>
-<div class="logo">Digital NP</div>
-<nav>
-<a href="#">Home</a>
-<a href="#">Mobiles</a>
-<a href="#">Laptops</a>
-</nav>
-</header>
+<h1>📱 Digital NP Store</h1>
 
-<div class="hero">
-<h1>Best Deals in Nepal</h1>
-<p>Samsung | Redmi | Dell | HP</p>
-</div>
+<div id="products"></div>
 
-<div class="search-box">
-<input type="text" id="search" placeholder="Search..." onkeyup="searchProduct()">
-</div>
+<!-- 🔥 IMPORTANT PART -->
 
-<div class="cart-btn" onclick="toggleCart()">🛒 (<span id="count">0</span>)</div>
-
-<div class="products" id="products"></div>
-
-<div class="cart-page" id="cartPage">
-<h2>Your Cart</h2>
-<div id="cartItems"></div>
-
-<h3>Order Details</h3>
-<input id="name" placeholder="Name">
-<input id="phone" placeholder="Phone">
-<textarea id="address" placeholder="Address"></textarea>
-
-<button onclick="order()">Place Order</button>
-
-</div>
-
-<footer>
-<p>© Digital NP Store | Ncell Distributor</p>
-</footer>
-
-<script>
-let cart=[];
-let products=[
-{name:"Samsung S23",price:120000,img:"https://via.placeholder.com/300"},
-{name:"Redmi Note 13",price:30000,img:"https://via.placeholder.com/300"},
-{name:"Vivo V29",price:50000,img:"https://via.placeholder.com/300"},
-{name:"Dell Inspiron",price:85000,img:"https://via.placeholder.com/300"},
-{name:"HP Pavilion",price:95000,img:"https://via.placeholder.com/300"},
-{name:"Lenovo IdeaPad",price:70000,img:"https://via.placeholder.com/300"}
-];
-
-let filtered=products;
-
-function display(){
-let html="";
-filtered.forEach((p,i)=>{
-html+=`
-<div class="card">
-<img src="${p.img}">
-<h3>${p.name}</h3>
-<p class="price">Rs.${p.price}</p>
-<button onclick="add(${i})">Add to Cart</button>
-</div>`;
-});
-document.getElementById("products").innerHTML=html;
-}
-
-function add(i){
-cart.push(filtered[i]);
-document.getElementById("count").innerText=cart.length;
-updateCart();
-}
-
-function updateCart(){
-let html="";
-cart.forEach(item=>{
-html+=`<p>${item.name} - Rs.${item.price}</p>`;
-});
-document.getElementById("cartItems").innerHTML=html;
-}
-
-function toggleCart(){
-let c=document.getElementById("cartPage");
-c.style.display=c.style.display==="block"?"none":"block";
-}
-
-function searchProduct(){
-let val=document.getElementById("search").value.toLowerCase();
-filtered=products.filter(p=>p.name.toLowerCase().includes(val));
-display();
-}
-
-function order(){
-let name=document.getElementById("name").value;
-let phone=document.getElementById("phone").value;
-let address=document.getElementById("address").value;
-
-let msg="Order:%0A";
-cart.forEach(i=>{
-msg+=i.name+" Rs."+i.price+"%0A";
-});
-
-msg+="Name:"+name+" Phone:"+phone+" Address:"+address;
-
-window.open("https://wa.me/9779804240666?text="+msg);
-}
-
-display();
-</script>
+<script type="module" src="app.js"></script>
 
 </body>
 </html>
