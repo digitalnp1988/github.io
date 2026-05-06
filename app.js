@@ -1,3 +1,5 @@
+console.log("APP JS LOADED");
+
 import { db, collection, getDocs } from "./firebase.js";
 
 async function loadProducts() {
