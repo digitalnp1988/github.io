@@ -7,15 +7,19 @@
 <title>Digital NP Store</title>
 
 <style>
-body {font-family: Arial; margin:0; background:#f4f4f4;}
-header {background:#111; color:#fff; text-align:center; padding:15px;}
-.products {display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:20px; padding:20px;}
-.card {background:#fff; padding:15px; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1);}
-.card img {width:100%; height:200px; object-fit:cover;}
-button {background:#28a745; color:#fff; padding:10px; border:none; border-radius:5px; cursor:pointer;}
-.cart-btn {position:fixed; right:10px; top:10px; background:#000; color:#fff; padding:10px;}
-.cart-page {position:fixed; right:0; top:0; width:320px; height:100%; background:#fff; padding:15px; box-shadow:-2px 0 10px rgba(0,0,0,0.2); display:none;}
-input, textarea {width:100%; padding:8px; margin:5px 0;}
+body {margin:0;font-family:Arial;background:#f5f5f5;}
+header {background:#111;color:#fff;padding:15px;text-align:center;}
+.hero {background:#ff6600;color:#fff;padding:40px;text-align:center;}
+.hero h1 {margin:0;}
+.categories {display:flex;justify-content:center;gap:20px;padding:20px;}
+.cat {background:#fff;padding:15px;border-radius:10px;cursor:pointer;box-shadow:0 0 5px rgba(0,0,0,0.1);}
+.products {display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;padding:20px;}
+.card {background:#fff;border-radius:10px;padding:10px;box-shadow:0 0 10px rgba(0,0,0,0.1);}
+.card img {width:100%;height:200px;object-fit:cover;}
+button {background:#ff6600;color:#fff;border:none;padding:10px;cursor:pointer;border-radius:5px;}
+.cart {position:fixed;right:10px;top:10px;background:#000;color:#fff;padding:10px;border-radius:5px;}
+.cart-page {position:fixed;right:0;top:0;width:300px;height:100%;background:#fff;padding:15px;display:none;overflow:auto;}
+input,textarea {width:100%;padding:8px;margin:5px 0;}
 </style>
 
 </head>
@@ -23,65 +27,71 @@ input, textarea {width:100%; padding:8px; margin:5px 0;}
 <body>
 
 <header>
-<h1>📱 Digital NP Store</h1>
-<p>Mobiles | Laptops | Ncell Services</p>
+<h2>📱 Digital NP Store</h2>
 </header>
 
-<div class="cart-btn" onclick="toggleCart()">🛒 Cart (<span id="count">0</span>)</div>
+<div class="hero">
+<h1>Best Mobile & Laptop Deals</h1>
+<p>Latest Samsung, Redmi, Dell & More</p>
+</div>
 
-<div class="products" id="product-list"></div>
+<div class="categories">
+<div class="cat" onclick="filter('all')">All</div>
+<div class="cat" onclick="filter('mobile')">Mobile</div>
+<div class="cat" onclick="filter('laptop')">Laptop</div>
+</div>
+
+<div class="cart" onclick="toggleCart()">Cart (<span id="count">0</span>)</div>
+
+<div class="products" id="products"></div>
 
 <div class="cart-page" id="cartPage">
-<h2>Your Cart</h2>
+<h3>Your Cart</h3>
 <div id="cartItems"></div>
 
-<h3>Customer Details</h3>
-<input type="text" id="name" placeholder="Full Name">
-<input type="text" id="phone" placeholder="Phone Number">
+<h4>Customer Info</h4>
+<input id="name" placeholder="Name">
+<input id="phone" placeholder="Phone">
 <textarea id="address" placeholder="Address"></textarea>
 
-<button onclick="orderNow()">Order (Cash on Delivery)</button>
+<button onclick="order()">Order COD</button>
 
 </div>
 
 <script>
 let cart=[];
-
-const products=[
-{name:"Samsung Galaxy S23",price:120000,img:"https://via.placeholder.com/300",desc:"Flagship Samsung phone"},
-{name:"Redmi Note 13",price:30000,img:"https://via.placeholder.com/300",desc:"Budget phone"},
-{name:"Vivo V29",price:50000,img:"https://via.placeholder.com/300",desc:"Camera phone"},
-{name:"Oppo Reno 10",price:55000,img:"https://via.placeholder.com/300",desc:"Stylish phone"},
-{name:"Dell Inspiron 15",price:85000,img:"https://via.placeholder.com/300",desc:"Powerful laptop"},
-{name:"HP Pavilion",price:95000,img:"https://via.placeholder.com/300",desc:"Premium laptop"},
-{name:"Lenovo IdeaPad",price:70000,img:"https://via.placeholder.com/300",desc:"Affordable laptop"},
-{name:"Asus VivoBook",price:80000,img:"https://via.placeholder.com/300",desc:"Slim laptop"}
+let products=[
+{name:"Samsung Galaxy S23",price:120000,cat:"mobile",img:"https://via.placeholder.com/300"},
+{name:"Redmi Note 13",price:30000,cat:"mobile",img:"https://via.placeholder.com/300"},
+{name:"Vivo V29",price:50000,cat:"mobile",img:"https://via.placeholder.com/300"},
+{name:"Dell Inspiron 15",price:85000,cat:"laptop",img:"https://via.placeholder.com/300"},
+{name:"HP Pavilion",price:95000,cat:"laptop",img:"https://via.placeholder.com/300"},
+{name:"Lenovo IdeaPad",price:70000,cat:"laptop",img:"https://via.placeholder.com/300"}
 ];
 
-function loadProducts(){
+let current=products;
+
+function display(){
 let html="";
-products.forEach((p,i)=>{
+current.forEach((p,i)=>{
 html+=`
 <div class="card">
 <img src="${p.img}">
 <h3>${p.name}</h3>
-<p>${p.desc}</p>
-<h4>Rs. ${p.price}</h4>
-<button onclick="addToCart(${i})">Add to Cart</button>
-</div>
-`;
+<p>Rs.${p.price}</p>
+<button onclick="add(${i})">Add to Cart</button>
+</div>`;
 });
-document.getElementById("product-list").innerHTML=html;
+document.getElementById("products").innerHTML=html;
 }
 
-function addToCart(i){
-cart.push(products[i]);
+function add(i){
+cart.push(current[i]);
+document.getElementById("count").innerText=cart.length;
 updateCart();
 }
 
 function updateCart(){
-document.getElementById("count").innerText=cart.length;
-
 let html="";
 cart.forEach(item=>{
 html+=`<p>${item.name} - Rs.${item.price}</p>`;
@@ -90,32 +100,32 @@ document.getElementById("cartItems").innerHTML=html;
 }
 
 function toggleCart(){
-let cartPage=document.getElementById("cartPage");
-cartPage.style.display=cartPage.style.display==="block"?"none":"block";
+let c=document.getElementById("cartPage");
+c.style.display=c.style.display==="block"?"none":"block";
 }
 
-function orderNow(){
+function filter(cat){
+if(cat==="all") current=products;
+else current=products.filter(p=>p.cat===cat);
+display();
+}
+
+function order(){
 let name=document.getElementById("name").value;
 let phone=document.getElementById("phone").value;
 let address=document.getElementById("address").value;
 
-if(!name || !phone || !address){
-alert("Please fill all details");
-return;
-}
-
-let text="🛒 Order Details:%0A";
-cart.forEach(item=>{
-text+=item.name+" - Rs."+item.price+"%0A";
+let msg="Order:%0A";
+cart.forEach(i=>{
+msg+=i.name+" Rs."+i.price+"%0A";
 });
 
-text+="%0A👤 Name: "+name;
-text+="%0A📞 Phone: "+phone;
-text+="%0A📍 Address: "+address;
+msg+="Name:"+name+" Phone:"+phone+" Address:"+address;
 
-window.open("https://wa.me/97798XXXXXXXX?text="+text);
+window.open("https://wa.me/97798XXXXXXXX?text="+msg);
 }
-loadProducts();
+
+display();
 </script>
 
 </body>
